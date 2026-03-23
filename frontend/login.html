@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Back2Roots</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body { background: #080c14; color: #f0f4ff; font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+    :root {
+      --navy: #080c14;
+      --navy2: #0d1424;
+      --navy3: #111928;
+      --blue: #0a66c2;
+      --blue-bright: #1d8cf8;
+      --glow: #00d4ff;
+      --lime: #06d6a0;
+      --red: #f87171;
+      --border-dim: rgba(255,255,255,0.08);
+      --border-glow: rgba(0,212,255,0.25);
+      --text-dim: rgba(240,244,255,0.5);
+      --text-mid: rgba(240,244,255,0.8);
+    }
+
+    .auth-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── Left Panel ── */
+    .auth-left {
+      background: var(--navy2);
+      border-right: 1px solid var(--border-dim);
+      display: flex; flex-direction: column;
+      padding: 40px 48px;
+      position: relative; overflow: hidden;
+    }
+    .auth-left-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 20% 80%, rgba(10,102,194,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 20%, rgba(0,212,255,0.10) 0%, transparent 55%);
+    }
+    .auth-left-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .auth-left-content { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; }
+
+    .auth-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: auto; }
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--glow));
+      border-radius: 8px; display: grid; place-items: center;
+      font-family: 'Sora', sans-serif; font-weight: 800; font-size: 11px;
+      color: white; letter-spacing: -0.5px;
+      box-shadow: 0 0 16px rgba(0,212,255,0.3);
+    }
+    .logo-name { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.15rem; color: #fff; }
+    .logo-name span { color: var(--glow); }
+
+    .auth-left-hero { margin: auto 0; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 1.8px;
+      text-transform: uppercase; color: var(--glow); margin-bottom: 20px;
+    }
+    .eyebrow::before { content: ''; width: 18px; height: 2px; background: var(--glow); display: block; }
+    .left-title {
+      font-family: 'Sora', sans-serif; font-weight: 800;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      line-height: 1.15; letter-spacing: -1px; margin-bottom: 16px;
+    }
+    .left-title .grad {
+      background: linear-gradient(90deg, var(--blue-bright), var(--glow));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .left-sub { font-size: 0.92rem; color: var(--text-dim); line-height: 1.75; max-width: 380px; margin-bottom: 36px; }
+
+    .auth-perks { display: flex; flex-direction: column; gap: 14px; }
+    .auth-perk { display: flex; align-items: flex-start; gap: 12px; }
+    .perk-icon {
+      width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+      display: grid; place-items: center; font-size: 16px;
+    }
+    .pi-blue { background: rgba(10,102,194,0.2); border: 1px solid rgba(10,102,194,0.3); }
+    .pi-cyan { background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.25); }
+    .pi-green { background: rgba(6,214,160,0.12); border: 1px solid rgba(6,214,160,0.25); }
+    .perk-title { font-weight: 600; font-size: 0.875rem; margin-bottom: 1px; }
+    .perk-sub { font-size: 0.78rem; color: var(--text-dim); }
+
+    .left-quote {
+      margin-top: 48px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-dim);
+      border-radius: 14px; padding: 20px;
+    }
+    .quote-stars { color: #f59e0b; font-size: 12px; letter-spacing: 2px; margin-bottom: 10px; }
+    .quote-text { font-size: 0.85rem; color: var(--text-mid); line-height: 1.7; font-style: italic; margin-bottom: 14px; }
+    .quote-author { display: flex; align-items: center; gap: 10px; }
+    .quote-av {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, #0a66c2, #00d4ff);
+      display: grid; place-items: center; font-size: 12px;
+      font-weight: 700; color: white; font-family: 'Sora', sans-serif;
+    }
+    .quote-name { font-size: 0.82rem; font-weight: 700; }
+    .quote-role { font-size: 0.72rem; color: var(--text-dim); }
+
+    /* ── Right Panel ── */
+    .auth-right {
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; padding: 60px 48px;
+      background: var(--navy);
+    }
+    .auth-form-wrap { width: 100%; max-width: 400px; }
+
+    .form-title {
+      font-family: 'Sora', sans-serif; font-weight: 800;
+      font-size: 1.75rem; letter-spacing: -0.8px; margin-bottom: 6px;
+    }
+    .form-subtitle { font-size: 0.875rem; color: var(--text-dim); margin-bottom: 28px; }
+    .form-subtitle a { color: var(--glow); text-decoration: none; font-weight: 600; }
+    .form-subtitle a:hover { text-decoration: underline; }
+
+    /* Alert — keeps original ID "login-error" */
+    .alert {
+      padding: 11px 14px; border-radius: 9px; font-size: 0.82rem;
+      margin-bottom: 16px; align-items: center; gap: 8px;
+      display: none;
+    }
+    .alert:not(:empty) { display: flex; }
+    .alert-error { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.25); color: #fca5a5; }
+    .alert-success { background: rgba(6,214,160,0.08); border: 1px solid rgba(6,214,160,0.25); color: var(--lime); }
+
+    /* Form groups */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block; font-size: 0.82rem; font-weight: 600;
+      color: var(--text-mid); margin-bottom: 7px;
+    }
+    /* form-control maps to existing class in auth.js */
+    .form-control {
+      width: 100%; padding: 12px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid var(--border-dim);
+      border-radius: 10px; color: #f0f4ff;
+      font-family: inherit; font-size: 0.9rem;
+      outline: none; transition: all 0.2s;
+    }
+    .form-control::placeholder { color: rgba(240,244,255,0.25); }
+    .form-control:focus {
+      border-color: var(--blue-bright);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 3px rgba(29,140,248,0.14);
+    }
+    .form-control.error { border-color: var(--red); }
+
+    .pw-wrapper { position: relative; }
+    .pw-wrapper .form-control { padding-right: 44px; }
+    #toggle-pw {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      font-size: 16px; color: rgba(240,244,255,0.3);
+      transition: color 0.2s; padding: 0;
+    }
+    #toggle-pw:hover { color: var(--text-mid); }
+
+    .forgot-row { text-align: right; margin: -8px 0 16px; }
+    .forgot-row a { font-size: 0.82rem; color: var(--glow); text-decoration: none; font-weight: 600; }
+    .forgot-row a:hover { text-decoration: underline; }
+
+    /* btn — keeps original classes btn btn-primary btn-full */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 20px; border: none; border-radius: 10px;
+      font-family: inherit; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.25s; text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-bright) 100%);
+      color: white; box-shadow: 0 4px 20px rgba(29,140,248,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(29,140,248,0.55); color: white; }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .btn-full { width: 100%; }
+
+    .auth-divider {
+      display: flex; align-items: center; gap: 14px;
+      margin: 22px 0; font-size: 0.78rem; color: var(--text-dim);
+    }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-dim); }
+
+    .btn-google {
+      width: 100%; padding: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-dim); border-radius: 10px;
+      color: var(--text-mid); font-family: inherit; font-size: 0.875rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 20px;
+    }
+    .btn-google:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.18); color: #fff; }
+    .google-icon { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* auth-footer keeps original class */
+    .auth-footer { text-align: center; font-size: 0.875rem; color: var(--text-dim); }
+    .auth-footer a { color: var(--glow); text-decoration: none; font-weight: 600; }
+    .auth-footer a:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .auth-shell { grid-template-columns: 1fr; }
+      .auth-left { display: none; }
+      .auth-right { padding: 40px 24px; min-height: 100vh; }
+    }
+  </style>
+</head>
+<body data-page="login">
+
+<div class="auth-shell">
+
+  <!-- LEFT PANEL -->
+  <div class="auth-left">
+    <div class="auth-left-bg"></div>
+    <div class="auth-left-content">
+
+      <a href="index.html" class="auth-logo">
+        <div class="logo-mark">B2R</div>
+        <span class="logo-name">Back2<span>Roots</span></span>
+      </a>
+
+      <div class="auth-left-hero">
+        <div class="eyebrow">Welcome Back</div>
+        <h1 class="left-title">
+          Your community<br>is <span class="grad">waiting for you</span>
+        </h1>
+        <p class="left-sub">
+          Sign in to reconnect with mentors, check your messages, and discover new opportunities within your college network.
+        </p>
+
+        <div class="auth-perks">
+          <div class="auth-perk">
+            <div class="perk-icon pi-blue">🤖</div>
+            <div>
+              <div class="perk-title">AI-curated recommendations</div>
+              <div class="perk-sub">New matches waiting based on your profile</div>
+            </div>
+          </div>
+          <div class="auth-perk">
+            <div class="perk-icon pi-cyan">💬</div>
+            <div>
+              <div class="perk-title">Messages from your network</div>
+              <div class="perk-sub">Alumni and students reaching out to connect</div>
+            </div>
+          </div>
+          <div class="auth-perk">
+            <div class="perk-icon pi-green">🎓</div>
+            <div>
+              <div class="perk-title">Mentorship updates</div>
+              <div class="perk-sub">Track your sessions and upcoming meetings</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="left-quote">
+          <div class="quote-stars">★★★★★</div>
+          <p class="quote-text">"Back2Roots helped me land my dream role at Google. The alumni community here is incredibly supportive."</p>
+          <div class="quote-author">
+            <div class="quote-av">K</div>
+            <div>
+              <div class="quote-name">Karan Bose</div>
+              <div class="quote-role">Software Engineer · Google</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+
+      <h2 class="form-title">Sign In</h2>
+      <p class="form-subtitle">
+        New to Back2Roots? <a href="signup.html">Create an account →</a>
+      </p>
+
+      <!-- Original ID preserved for auth.js -->
+      <div class="alert alert-error" id="login-error" role="alert"></div>
+
+      <!-- Original form ID preserved for auth.js -->
+      <form id="login-form" novalidate>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-control" type="email" id="email"
+            placeholder="you@college.edu" autocomplete="email" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="pw-wrapper">
+            <input class="form-control" type="password" id="password"
+              placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" id="toggle-pw" title="Show / hide password">👁</button>
+          </div>
+        </div>
+
+        <div class="forgot-row">
+          <a href="forgot-password.html">Forgot password?</a>
+        </div>
+
+        <!-- Original ID "login-btn" preserved for auth.js -->
+        <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+          Sign In →
+        </button>
+
+      </form>
+
+      <div class="auth-divider"><span>or</span></div>
+
+      <button class="btn-google" onclick="alert('Google OAuth integration goes here.')">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <!-- Original class preserved for any auth.js DOM reads -->
+      <div class="auth-footer">
+        New to Back2Roots? <a href="signup.html">Create an account</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Toggle password visibility
+  document.getElementById('toggle-pw').addEventListener('click', function () {
+    const input = document.getElementById('password');
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    this.textContent = show ? '🙈' : '👁';
+  });
+
+  // Show alert when auth.js sets its text content
+  const loginError = document.getElementById('login-error');
+  const observer = new MutationObserver(() => {
+    loginError.style.display = loginError.textContent.trim() ? 'flex' : 'none';
+  });
+  observer.observe(loginError, { childList: true, subtree: true, characterData: true });
+</script>
+
+<!-- Original script tag preserved exactly as-is -->
+<script type="module" src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+# ── Python ────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.cache/
+
+# ── Virtual environments ──────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Environment / secrets ─────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── IDE ───────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# ── pytest / coverage ─────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# ── Alembic ───────────────────────────────────────────────
+alembic/versions/*.py
+!alembic/versions/.gitkeep
+
+# ── Logs ──────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Docker volumes ────────────────────────────────────────
+mysql_data/
+
+# ── Node (if frontend tooling added later) ────────────────
+node_modules/

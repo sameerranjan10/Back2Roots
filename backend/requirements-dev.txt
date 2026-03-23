@@ -1,0 +1,17 @@
+# ── Install production deps first ─────────────────────────
+-r requirements.txt
+
+# ── Testing ───────────────────────────────────────────────
+pytest==8.2.2
+pytest-asyncio==0.23.7
+httpx==0.27.0            # ASGI test client used by FastAPI TestClient
+
+# ── SQLite driver (in-memory test DB) ─────────────────────
+# Built into Python stdlib — no extra install needed.
+
+# ── Code quality ──────────────────────────────────────────
+ruff==0.4.9              # linter + formatter
+mypy==1.10.0             # type checker
+
+# ── Debug ─────────────────────────────────────────────────
+ipython==8.25.0

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Settings — Back2Roots</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/app-dark.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="dashboard.html" class="nav-logo">
+      <div class="logo-icon">B2R</div>
+      <span class="logo-text">Back2Roots</span>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="dashboard.html"><span class="nav-icon">🏠</span><span>Home</span></a>
+      <a class="nav-link" href="profile.html"><span class="nav-icon">👤</span><span>Profile</span></a>
+      <div class="nav-avatar" id="nav-user-avatar">?</div>
+      <button id="logout-btn" class="btn btn-ghost btn-sm" style="margin-left:4px;">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<main style="max-width:600px;margin:32px auto;padding:0 20px;">
+
+  <h2 style="margin-bottom:24px;font-family:'Sora',sans-serif;">⚙️ Account Settings</h2>
+
+  <!-- Change Password -->
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header"><h3>🔒 Change Password</h3></div>
+    <div class="card-body">
+      <div class="alert alert-error"   id="pw-error"   role="alert"></div>
+      <div class="alert alert-success" id="pw-success" role="alert"></div>
+
+      <div class="form-group">
+        <label class="form-label" for="current-pw">Current Password</label>
+        <input class="form-control" type="password" id="current-pw" placeholder="Your current password">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="new-pw">New Password</label>
+        <input class="form-control" type="password" id="new-pw" placeholder="Min 6 characters">
+        <!-- Strength bar -->
+        <div id="pw-strength-bar" style="display:none;margin-top:6px;">
+          <div style="height:4px;background:var(--border);border-radius:2px;">
+            <div id="pw-strength-fill" style="height:100%;border-radius:2px;width:0%;transition:width 0.3s,background 0.3s;"></div>
+          </div>
+          <div id="pw-strength-label" style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="confirm-pw">Confirm New Password</label>
+        <input class="form-control" type="password" id="confirm-pw" placeholder="Repeat new password">
+      </div>
+      <button class="btn btn-primary" id="change-pw-btn">Update Password</button>
+    </div>
+  </div>
+
+  <!-- Account Info (read-only) -->
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header"><h3>ℹ️ Account Info</h3></div>
+    <div class="card-body">
+      <table style="width:100%;border-collapse:collapse;font-size:0.9rem;">
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 0;color:var(--text-muted);width:40%;">Name</td>
+          <td id="info-name" style="padding:10px 0;font-weight:500;">—</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 0;color:var(--text-muted);">Email</td>
+          <td id="info-email" style="padding:10px 0;">—</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 0;color:var(--text-muted);">Role</td>
+          <td id="info-role" style="padding:10px 0;">—</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 0;color:var(--text-muted);">Member since</td>
+          <td id="info-joined" style="padding:10px 0;">—</td>
+        </tr>
+      </table>
+      <div style="margin-top:14px;">
+        <a href="profile.html" class="btn btn-outline btn-sm">✏️ Edit Profile Details</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Danger Zone -->
+  <div class="card" style="border-color:var(--accent-red);">
+    <div class="card-header" style="background:#fef2f2;">
+      <h3 style="color:var(--accent-red);">⚠️ Danger Zone</h3>
+    </div>
+    <div class="card-body">
+      <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:14px;">
+        Signing out will remove your session from this device.
+      </p>
+      <button class="btn btn-danger btn-sm" id="signout-all-btn">🚪 Sign Out</button>
+    </div>
+  </div>
+
+</main>
+
+<script type="module">
+  import { requireAuth, getUser, removeToken, passwordReset, toast } from './js/api.js';
+
+  if (!requireAuth()) throw new Error('Not auth');
+  const user = getUser();
+
+  // Navbar avatar
+  const navAvatar = document.getElementById('nav-user-avatar');
+  const { initials } = await import('./js/api.js');
+  if (navAvatar) navAvatar.textContent = (user.name || '?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('logout-btn').addEventListener('click', () => { removeToken(); window.location.href='login.html'; });
+
+  // Fill account info
+  document.getElementById('info-name').textContent   = user.name   || '—';
+  document.getElementById('info-email').textContent  = user.email  || '—';
+  document.getElementById('info-role').innerHTML     = `<span class="role-badge ${user.role}">${(user.role||'').replace(/^\w/,c=>c.toUpperCase())}</span>`;
+  document.getElementById('info-joined').textContent = user.created_at
+    ? new Date(user.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
+    : '—';
+
+  // Password strength meter
+  const newPwInput = document.getElementById('new-pw');
+  const bar        = document.getElementById('pw-strength-bar');
+  const fill       = document.getElementById('pw-strength-fill');
+  const lbl        = document.getElementById('pw-strength-label');
+  newPwInput?.addEventListener('input', () => {
+    const v = newPwInput.value;
+    if (!v) { bar.style.display = 'none'; return; }
+    bar.style.display = 'block';
+    let s = 0;
+    if (v.length >= 6)          s++;
+    if (v.length >= 10)         s++;
+    if (/[A-Z]/.test(v))        s++;
+    if (/[0-9]/.test(v))        s++;
+    if (/[^A-Za-z0-9]/.test(v)) s++;
+    const lvls = [
+      {pct:'20%',color:'#ef4444',text:'Very weak'},
+      {pct:'40%',color:'#f97316',text:'Weak'},
+      {pct:'60%',color:'#eab308',text:'Fair'},
+      {pct:'80%',color:'#22c55e',text:'Strong'},
+      {pct:'100%',color:'#16a34a',text:'Very strong'},
+    ];
+    const l = lvls[Math.min(s-1,4)]||lvls[0];
+    fill.style.width = l.pct; fill.style.background = l.color;
+    lbl.textContent  = `Strength: ${l.text}`;
+  });
+
+  // Change password
+  document.getElementById('change-pw-btn').addEventListener('click', async () => {
+    const errEl  = document.getElementById('pw-error');
+    const okEl   = document.getElementById('pw-success');
+    const btn    = document.getElementById('change-pw-btn');
+    errEl.classList.remove('show'); okEl.classList.remove('show');
+
+    const current = document.getElementById('current-pw').value;
+    const newPw   = newPwInput.value;
+    const confirm = document.getElementById('confirm-pw').value;
+
+    if (!current || !newPw || !confirm) { errEl.textContent='Fill in all fields.'; errEl.classList.add('show'); return; }
+    if (newPw !== confirm) { errEl.textContent='Passwords do not match.'; errEl.classList.add('show'); return; }
+    if (newPw.length < 6)  { errEl.textContent='New password must be at least 6 characters.'; errEl.classList.add('show'); return; }
+
+    btn.disabled = true; btn.textContent = 'Updating…';
+    try {
+      await passwordReset.change(current, newPw);
+      okEl.textContent = '✅ Password changed successfully!'; okEl.classList.add('show');
+      document.getElementById('current-pw').value = '';
+      newPwInput.value = ''; document.getElementById('confirm-pw').value = '';
+      bar.style.display = 'none';
+    } catch (err) {
+      errEl.textContent = err.message; errEl.classList.add('show');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Update Password';
+    }
+  });
+
+  // Sign out
+  document.getElementById('signout-all-btn').addEventListener('click', () => {
+    removeToken(); window.location.href = 'login.html';
+  });
+</script>
+
+</body>
+</html>

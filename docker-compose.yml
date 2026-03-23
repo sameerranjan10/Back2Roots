@@ -1,0 +1,101 @@
+version: "3.9"
+
+# ══════════════════════════════════════════════════════════
+#  Back2Roots — Docker Compose
+#
+#  Before first run:
+#    bash ssl_gen.sh
+#    cp backend/.env.example backend/.env  (fill in secrets)
+#
+#  Start:
+#    docker compose up --build
+#
+#  Access:
+#    https://localhost       → Frontend
+#    https://localhost/docs  → API Swagger UI
+# ══════════════════════════════════════════════════════════
+
+services:
+
+  # ── MySQL 8 ────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: alumni_nexus_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE:      alumni_db
+      MYSQL_USER:          alumni_user
+      MYSQL_PASSWORD:      ${MYSQL_PASSWORD:-alumni_pass}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
+             "-u", "root", "--password=${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - alumni_net
+
+  # ── FastAPI Backend ─────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: alumni_nexus_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL:         "mysql+pymysql://alumni_user:${MYSQL_PASSWORD:-alumni_pass}@db:3306/alumni_db"
+      SECRET_KEY:           ${SECRET_KEY:-change-me-in-production-now}
+      TOKEN_EXPIRE_MINUTES: ${TOKEN_EXPIRE_MINUTES:-1440}
+      DEBUG:                ${DEBUG:-false}
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - alumni_net
+
+  # ── Nginx (HTTPS + static frontend + reverse proxy) ─────
+  nginx:
+    image: nginx:alpine
+    container_name: alumni_nexus_nginx
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - uploads_data:/usr/share/nginx/uploads:ro
+    networks:
+      - alumni_net
+
+volumes:
+  mysql_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  alumni_net:
+    driver: bridge

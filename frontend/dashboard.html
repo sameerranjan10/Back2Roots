@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Back2Roots</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/app-dark.css">
+  <style>
+    /* Mobile hamburger */
+    .hamburger { display:none; background:none; border:none; font-size:22px; cursor:pointer; padding:4px; color:#f0f4ff; }
+    .mobile-nav-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:900; }
+    .mobile-nav-drawer  { position:fixed; top:0; left:-280px; width:280px; height:100vh; background:#0d1424;
+                          z-index:950; transition:left 0.3s ease; box-shadow:var(--shadow-lg); overflow-y:auto;
+                          border-right:1px solid rgba(255,255,255,0.08); }
+    .mobile-nav-drawer.open { left:0; }
+    .mobile-nav-overlay.open { display:block; }
+    /* Search dropdown */
+    .search-dropdown { display:none; position:absolute; top:100%; left:0; right:0; background:#0d1424;
+                       border:1px solid rgba(255,255,255,0.1); border-radius:var(--radius); box-shadow:0 8px 32px rgba(0,0,0,0.6);
+                       z-index:500; max-height:320px; overflow-y:auto; margin-top:4px; }
+    .search-dropdown.open { display:block; }
+    .search-result-item { display:flex; align-items:center; gap:10px; padding:10px 14px; cursor:pointer;
+                          border-bottom:1px solid rgba(255,255,255,0.06); transition:var(--transition); color:rgba(240,244,255,0.75); }
+    .search-result-item:last-child { border-bottom:none; }
+    .search-result-item:hover { background:rgba(255,255,255,0.05); }
+    /* Notification dropdown */
+    .notif-btn { position:relative; }
+    .notif-badge { position:absolute; top:-2px; right:-2px; background:#f87171; color:white;
+                   border-radius:50%; width:16px; height:16px; font-size:10px; font-weight:700;
+                   display:none; place-items:center; }
+    .notif-badge.show { display:grid; }
+    @media (max-width: 768px) {
+      .hamburger { display:block; }
+      .nav-links  { display:none; }
+      .nav-search { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════ NAVBAR ════════════════════ -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <!-- Mobile hamburger -->
+    <button class="hamburger" id="hamburger-btn" aria-label="Menu">☰</button>
+
+    <a href="dashboard.html" class="nav-logo">
+      <div class="logo-icon">B2R</div>
+      <span class="logo-text">Back2Roots</span>
+    </a>
+
+    <!-- Search bar with live dropdown -->
+    <div class="nav-search" style="position:relative;">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="global-search-input" placeholder="Search people, posts…" autocomplete="off">
+      <div class="search-dropdown" id="search-dropdown"></div>
+    </div>
+
+    <div class="nav-links">
+      <a class="nav-link active" href="dashboard.html">
+        <span class="nav-icon">🏠</span><span>Home</span>
+      </a>
+      <a class="nav-link" href="chat.html">
+        <span class="nav-icon">💬</span><span>Messages</span>
+      </a>
+      <a class="nav-link" href="profile.html">
+        <span class="nav-icon">👤</span><span>Profile</span>
+      </a>
+
+      <!-- Notifications -->
+      <div style="position:relative;" class="notif-btn">
+        <button class="nav-link" id="notif-btn" style="position:relative;">
+          <span class="nav-icon">🔔</span><span>Alerts</span>
+          <span class="notif-badge" id="notif-badge"></span>
+        </button>
+        <div id="notif-dropdown" style="display:none;position:absolute;right:0;top:52px;
+             width:320px;background:#0d1424;border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);
+             box-shadow:0 8px 32px rgba(0,0,0,0.6);z-index:600;max-height:400px;overflow-y:auto;">
+          <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;
+               align-items:center;justify-content:space-between;">
+            <strong style="font-size:0.9rem;color:#f0f4ff;">Notifications</strong>
+            <button id="mark-all-read" style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:var(--primary);">
+              Mark all read
+            </button>
+          </div>
+          <div id="notif-list"><div class="loading-spinner"></div></div>
+        </div>
+      </div>
+
+      <a class="nav-link admin-only" href="dashboard.html#admin" style="display:none;">
+        <span class="nav-icon">⚙️</span><span>Admin</span>
+      </a>
+
+      <!-- User avatar / menu -->
+      <div style="position:relative;">
+        <div class="nav-avatar" id="nav-user-avatar" onclick="toggleUserMenu()" style="cursor:pointer;">?</div>
+        <div id="user-menu" style="display:none;position:absolute;right:0;top:40px;background:#0d1424;
+             border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,0.6);
+             min-width:190px;z-index:500;">
+          <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.08);">
+            <div style="font-weight:600;font-size:0.875rem;color:#f0f4ff;" id="nav-user-name">…</div>
+            <div style="font-size:0.78rem;color:rgba(240,244,255,0.45);" id="nav-user-role">…</div>
+          </div>
+          <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:10px 16px;
+             font-size:0.875rem;color:rgba(240,244,255,0.7);text-decoration:none;"
+             onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''">
+            👤 View Profile
+          </a>
+          <a href="chat.html" style="display:flex;align-items:center;gap:8px;padding:10px 16px;
+             font-size:0.875rem;color:rgba(240,244,255,0.7);text-decoration:none;"
+             onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''">
+            💬 Messages
+          </a>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);"></div>
+          <button id="logout-btn" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''"
+            style="display:block;width:100%;padding:10px 16px;font-size:0.875rem;color:#fca5a5;
+                   background:none;border:none;text-align:left;cursor:pointer;font-family:inherit;">
+            🚪 Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile nav drawer -->
+<div class="mobile-nav-overlay" id="mobile-overlay"></div>
+<div class="mobile-nav-drawer" id="mobile-drawer">
+  <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+    <div class="nav-logo"><div class="logo-icon">B2R</div><span class="logo-text">Back2Roots</span></div>
+    <button onclick="closeMobileNav()" style="background:none;border:none;font-size:22px;cursor:pointer;">✕</button>
+  </div>
+  <div id="mobile-profile-summary" style="padding:16px;border-bottom:1px solid var(--border);"></div>
+  <nav>
+    <a href="dashboard.html"       class="sidebar-nav-item">🏠 Feed</a>
+    <a href="dashboard.html#alumni"class="sidebar-nav-item">🏛️ Browse Alumni</a>
+    <a href="chat.html"            class="sidebar-nav-item">💬 Messages</a>
+    <a href="dashboard.html#mentorship" class="sidebar-nav-item">🎓 Mentorship</a>
+    <a href="profile.html"         class="sidebar-nav-item">👤 My Profile</a>
+    <a href="dashboard.html#admin" class="sidebar-nav-item admin-only" style="display:none;">⚙️ Admin Panel</a>
+    <button id="mobile-logout"     class="sidebar-nav-item" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;color:var(--accent-red);">🚪 Sign Out</button>
+  </nav>
+</div>
+
+<!-- ════════════════════ 3-COLUMN LAYOUT ════════════════════ -->
+<main class="page-layout">
+
+  <!-- ── LEFT SIDEBAR ── -->
+  <aside class="sidebar-sticky">
+    <div id="profile-sidebar-card" class="profile-card">
+      <div class="profile-card-banner"></div>
+      <div style="padding:0 16px 16px;text-align:center;">
+        <div class="skeleton skeleton-avatar" style="margin:-36px auto 10px;"></div>
+        <div class="skeleton skeleton-line wide" style="margin:0 auto 6px;"></div>
+        <div class="skeleton skeleton-line narrow" style="margin:0 auto;"></div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="dashboard.html" onclick="showSection('feed')">
+        <span class="sidebar-nav-icon">🏠</span> Feed
+      </a>
+      <a class="sidebar-nav-item" href="#alumni" onclick="showSection('alumni')">
+        <span class="sidebar-nav-icon">🏛️</span> Browse Alumni
+      </a>
+      <a class="sidebar-nav-item" href="chat.html">
+        <span class="sidebar-nav-icon">💬</span> Messages
+      </a>
+      <a class="sidebar-nav-item" href="#mentorship" onclick="showSection('mentorship')">
+        <span class="sidebar-nav-icon">🎓</span> Mentorship
+      </a>
+      <a class="sidebar-nav-item admin-only" href="#admin" onclick="showSection('admin')" style="display:none;">
+        <span class="sidebar-nav-icon">⚙️</span> Admin Panel
+      </a>
+    </nav>
+  </aside>
+
+  <!-- ── CENTER ── -->
+  <section>
+
+    <!-- Feed section -->
+    <div id="section-feed">
+      <!-- Post Creation -->
+      <div class="post-create">
+        <div class="post-create-top">
+          <div class="post-create-avatar" id="create-post-avatar">?</div>
+          <input class="post-create-input" type="text" id="post-trigger"
+            placeholder="Share something with your network…" readonly>
+        </div>
+        <div class="post-compose-area" id="post-compose-area">
+          <textarea class="post-compose-textarea" id="post-textarea"
+            placeholder="What's on your mind?" maxlength="2000"></textarea>
+
+          <!-- Image: URL or File Upload -->
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <input class="form-control" type="url" id="post-image-url"
+              placeholder="📎 Image URL (optional)" style="flex:1;min-width:200px;">
+            <span style="color:var(--text-muted);font-size:0.85rem;">or</span>
+            <label class="btn btn-ghost btn-sm" style="cursor:pointer;margin:0;">
+              📁 Upload Image
+              <input type="file" id="post-image-file" accept="image/*" style="display:none;">
+            </label>
+          </div>
+          <div id="post-image-preview" style="margin-top:8px;display:none;">
+            <img id="post-image-preview-img" style="max-height:150px;border-radius:var(--radius);object-fit:cover;" alt="">
+            <button onclick="clearImagePreview()" style="background:none;border:none;cursor:pointer;color:var(--accent-red);font-size:12px;display:block;margin-top:4px;">✕ Remove</button>
+          </div>
+          <div class="post-compose-footer">
+            <button class="btn btn-ghost btn-sm" id="post-cancel">Cancel</button>
+            <button class="btn btn-primary btn-sm" id="post-submit">Post</button>
+          </div>
+        </div>
+        <div class="post-create-actions">
+          <button class="post-action-btn" onclick="openCompose()">📷 Photo</button>
+          <button class="post-action-btn" onclick="openCompose()">✍️ Article</button>
+          <button class="post-action-btn" onclick="openCompose()">💡 Achievement</button>
+        </div>
+      </div>
+
+      <!-- Feed -->
+      <div style="margin-top:12px;" id="feed-container">
+        <div class="post-card" style="padding:16px;">
+          <div style="display:flex;gap:12px;">
+            <div class="skeleton skeleton-avatar"></div>
+            <div style="flex:1;">
+              <div class="skeleton skeleton-line wide" style="margin-bottom:6px;"></div>
+              <div class="skeleton skeleton-line narrow"></div>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <div class="skeleton skeleton-line" style="width:95%;margin-bottom:6px;"></div>
+            <div class="skeleton skeleton-line" style="width:80%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- "You're all caught up" -->
+      <div id="feed-end-msg" style="display:none;text-align:center;padding:24px;color:var(--text-muted);font-size:0.875rem;">
+        ✅ You're all caught up!
+      </div>
+    </div>
+
+    <!-- Alumni Browse section -->
+    <div id="section-alumni" style="display:none;">
+      <div class="card">
+        <div class="card-header"><h3>🏛️ Browse Alumni</h3></div>
+        <div id="alumni-browse-grid"
+          style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;padding:16px;">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mentorship section -->
+    <div id="section-mentorship" style="display:none;">
+      <div class="card">
+        <div class="card-header"><h3 id="mentorship-panel-title">🎓 Mentorship</h3></div>
+        <div id="mentorship-requests-container" style="padding:12px;"><div class="loading-spinner"></div></div>
+        <div id="my-mentorship-container" style="padding:12px 16px;"></div>
+      </div>
+    </div>
+
+    <!-- Admin section -->
+    <div id="section-admin" style="display:none;">
+      <div class="stats-grid" id="admin-stats"></div>
+      <div class="admin-table-card">
+        <div class="admin-table-header"><h3>⚙️ User Management</h3></div>
+        <div id="admin-users-container" style="overflow-x:auto;"><div class="loading-spinner"></div></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── RIGHT SIDEBAR ── -->
+  <aside class="sidebar-sticky">
+    <div class="suggestions-card">
+      <div class="suggestions-header">🤖 People You May Know</div>
+      <div id="alumni-suggestions">
+        <div class="suggestion-item" style="pointer-events:none;">
+          <div class="skeleton" style="width:40px;height:40px;border-radius:50%;flex-shrink:0;"></div>
+          <div style="flex:1;"><div class="skeleton skeleton-line wide" style="margin-bottom:4px;"></div>
+          <div class="skeleton skeleton-line narrow"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="suggestions-card">
+      <div class="suggestions-header">📚 Quick Links</div>
+      <div style="padding:8px 0;">
+        <a href="chat.html" class="sidebar-nav-item" style="padding:8px 16px;">💬 Messages</a>
+        <a href="profile.html" class="sidebar-nav-item" style="padding:8px 16px;">👤 My Profile</a>
+        <a href="#mentorship" onclick="showSection('mentorship')" class="sidebar-nav-item" style="padding:8px 16px;">🎓 Mentorship</a>
+        <a href="#alumni" onclick="showSection('alumni')" class="sidebar-nav-item" style="padding:8px 16px;">🏛️ Alumni</a>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Mentorship modal -->
+<div class="modal-overlay" id="mentorship-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🎓 Request Mentorship</span>
+      <button class="modal-close" id="mentorship-modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mentorship-alumni-id">
+      <p style="margin-bottom:14px;font-size:0.9rem;color:var(--text-secondary);">
+        Sending request to <strong id="mentorship-alumni-name"></strong>
+      </p>
+      <div class="form-group">
+        <label class="form-label">Your message (optional)</label>
+        <textarea class="form-control" id="mentorship-message" rows="4" maxlength="500"
+          placeholder="Introduce yourself and describe what you'd like guidance on…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost"   id="mentorship-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="mentorship-submit">Send Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Chatbot widget -->
+<div class="chatbot-widget">
+  <div class="chatbot-window" id="chatbot-window">
+    <div class="chatbot-header">
+      <span style="font-size:22px;">🤖</span>
+      <div class="chatbot-header-info">
+        <div class="chatbot-header-name">Back2Roots AI</div>
+        <div class="chatbot-header-status">● Online — Career Guidance</div>
+      </div>
+      <button class="chatbot-close" id="chatbot-close">✕</button>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages"></div>
+    <div class="chatbot-input-row">
+      <input class="chatbot-input" type="text" id="chatbot-input"
+        placeholder="Ask about resume, career, mentor…" maxlength="300">
+      <button class="chatbot-send" id="chatbot-send">➤</button>
+    </div>
+  </div>
+  <button class="chatbot-toggle" id="chatbot-toggle" title="AI Career Assistant">🤖</button>
+</div>
+
+<script>
+  // ── Section routing ─────────────────────────────────────
+  function showSection(name) {
+    ['feed','alumni','mentorship','admin'].forEach(s => {
+      document.getElementById(`section-${s}`).style.display = s === name ? 'block' : 'none';
+    });
+    document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+  }
+
+  function handleHash() {
+    const hash = window.location.hash.replace('#','');
+    if (['alumni','mentorship','admin'].includes(hash)) showSection(hash);
+    else showSection('feed');
+  }
+  window.addEventListener('hashchange', handleHash);
+  handleHash();
+
+  function openCompose() {
+    document.getElementById('post-compose-area').classList.add('open');
+    document.getElementById('post-textarea').focus();
+  }
+  window.openCompose = openCompose;
+
+  // ── Mobile nav ──────────────────────────────────────────
+  function openMobileNav() {
+    document.getElementById('mobile-drawer').classList.add('open');
+    document.getElementById('mobile-overlay').classList.add('open');
+  }
+  function closeMobileNav() {
+    document.getElementById('mobile-drawer').classList.remove('open');
+    document.getElementById('mobile-overlay').classList.remove('open');
+  }
+  document.getElementById('hamburger-btn').addEventListener('click', openMobileNav);
+  document.getElementById('mobile-overlay').addEventListener('click', closeMobileNav);
+
+  // ── User menu ───────────────────────────────────────────
+  function toggleUserMenu() {
+    const m = document.getElementById('user-menu');
+    m.style.display = m.style.display === 'none' ? 'block' : 'none';
+  }
+  window.toggleUserMenu = toggleUserMenu;
+  document.addEventListener('click', e => {
+    const avatar = document.getElementById('nav-user-avatar');
+    const menu   = document.getElementById('user-menu');
+    if (menu && avatar && !avatar.contains(e.target) && !menu.contains(e.target))
+      menu.style.display = 'none';
+  });
+
+  // ── Notification dropdown ───────────────────────────────
+  document.getElementById('notif-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    const dd = document.getElementById('notif-dropdown');
+    dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+  });
+  document.addEventListener('click', e => {
+    const dd = document.getElementById('notif-dropdown');
+    const btn = document.getElementById('notif-btn');
+    if (dd && !btn.contains(e.target) && !dd.contains(e.target))
+      dd.style.display = 'none';
+  });
+
+  // ── Image file upload preview ───────────────────────────
+  document.getElementById('post-image-file').addEventListener('change', async function() {
+    const file = this.files[0];
+    if (!file) return;
+    const preview = document.getElementById('post-image-preview');
+    const img     = document.getElementById('post-image-preview-img');
+    const reader  = new FileReader();
+    reader.onload = e => { img.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(file);
+  });
+
+  function clearImagePreview() {
+    document.getElementById('post-image-preview').style.display = 'none';
+    document.getElementById('post-image-preview-img').src = '';
+    document.getElementById('post-image-file').value = '';
+    document.getElementById('post-image-url').value  = '';
+  }
+  window.clearImagePreview = clearImagePreview;
+</script>
+
+<script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

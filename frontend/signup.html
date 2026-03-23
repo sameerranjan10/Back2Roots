@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — Back2Roots</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body { background: #080c14; color: #f0f4ff; font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+    :root {
+      --navy: #080c14;
+      --navy2: #0d1424;
+      --navy3: #111928;
+      --blue: #0a66c2;
+      --blue-bright: #1d8cf8;
+      --glow: #00d4ff;
+      --lime: #06d6a0;
+      --amber: #f59e0b;
+      --red: #f87171;
+      --accent-red: #f87171;
+      --border-dim: rgba(255,255,255,0.08);
+      --border-glow: rgba(0,212,255,0.25);
+      --text-dim: rgba(240,244,255,0.5);
+      --text-mid: rgba(240,244,255,0.8);
+      --text-muted: rgba(240,244,255,0.4);
+      --border: rgba(255,255,255,0.1);
+    }
+
+    .auth-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── Left Panel ── */
+    .auth-left {
+      background: var(--navy2);
+      border-right: 1px solid var(--border-dim);
+      display: flex; flex-direction: column;
+      padding: 40px 48px;
+      position: relative; overflow: hidden;
+    }
+    .auth-left-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 80% 20%, rgba(0,212,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 10% 80%, rgba(10,102,194,0.16) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 60% 55%, rgba(6,214,160,0.07) 0%, transparent 50%);
+    }
+    .auth-left-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .auth-left-content { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; }
+
+    .auth-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: auto; }
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--glow));
+      border-radius: 8px; display: grid; place-items: center;
+      font-family: 'Sora', sans-serif; font-weight: 800; font-size: 11px;
+      color: white; letter-spacing: -0.5px;
+      box-shadow: 0 0 16px rgba(0,212,255,0.3);
+    }
+    .logo-name { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.15rem; color: #fff; }
+    .logo-name span { color: var(--glow); }
+
+    .auth-left-hero { margin: auto 0; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 1.8px;
+      text-transform: uppercase; color: var(--glow); margin-bottom: 20px;
+    }
+    .eyebrow::before { content: ''; width: 18px; height: 2px; background: var(--glow); display: block; }
+    .left-title {
+      font-family: 'Sora', sans-serif; font-weight: 800;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      line-height: 1.15; letter-spacing: -1px; margin-bottom: 16px;
+    }
+    .grad {
+      background: linear-gradient(90deg, var(--blue-bright), var(--glow));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .left-sub { font-size: 0.92rem; color: var(--text-dim); line-height: 1.75; max-width: 380px; margin-bottom: 36px; }
+
+    /* Steps */
+    .steps-visual { display: flex; flex-direction: column; gap: 0; margin-bottom: 40px; }
+    .step-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      position: relative; padding-bottom: 24px;
+    }
+    .step-row:last-child { padding-bottom: 0; }
+    .step-row:not(:last-child)::after {
+      content: ''; position: absolute; left: 15px; top: 32px;
+      width: 2px; height: calc(100% - 8px);
+      background: linear-gradient(to bottom, var(--border-glow), transparent);
+    }
+    .step-dot {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center; font-size: 13px;
+      font-weight: 700; font-family: 'Sora', sans-serif; border: 1px solid;
+    }
+    .sd-blue  { background: rgba(10,102,194,0.2);  border-color: rgba(10,102,194,0.4);  color: var(--blue-bright); }
+    .sd-cyan  { background: rgba(0,212,255,0.10);  border-color: rgba(0,212,255,0.3);   color: var(--glow); }
+    .sd-green { background: rgba(6,214,160,0.10);  border-color: rgba(6,214,160,0.3);   color: var(--lime); }
+    .step-title { font-weight: 600; font-size: 0.875rem; margin-bottom: 2px; padding-top: 5px; }
+    .step-desc  { font-size: 0.78rem; color: var(--text-dim); }
+
+    /* Mini stats */
+    .mini-stats { display: flex; gap: 20px; }
+    .mini-stat { text-align: center; }
+    .mini-stat-num {
+      font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.4rem;
+      background: linear-gradient(90deg, #fff, var(--glow));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .mini-stat-lbl { font-size: 0.72rem; color: var(--text-dim); margin-top: 2px; }
+    .mini-divider { width: 1px; background: var(--border-dim); align-self: stretch; }
+
+    /* ── Right Panel ── */
+    .auth-right {
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; padding: 48px;
+      background: var(--navy); overflow-y: auto;
+    }
+    .auth-form-wrap { width: 100%; max-width: 440px; }
+
+    .form-title {
+      font-family: 'Sora', sans-serif; font-weight: 800;
+      font-size: 1.75rem; letter-spacing: -0.8px; margin-bottom: 6px;
+    }
+    .form-subtitle { font-size: 0.875rem; color: var(--text-dim); margin-bottom: 24px; }
+    .form-subtitle a { color: var(--glow); text-decoration: none; font-weight: 600; }
+    .form-subtitle a:hover { text-decoration: underline; }
+
+    /* Alert — original ID "register-error" preserved */
+    .alert {
+      padding: 11px 14px; border-radius: 9px; font-size: 0.82rem;
+      margin-bottom: 16px; display: none; align-items: center; gap: 8px;
+    }
+    .alert:not(:empty) { display: flex; }
+    .alert-error   { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.25); color: #fca5a5; }
+    .alert-success { background: rgba(6,214,160,0.08);   border: 1px solid rgba(6,214,160,0.25);   color: var(--lime); }
+
+    /* Role cards */
+    .role-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .role-option { position: relative; }
+    .role-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .role-card {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 14px 10px; background: rgba(255,255,255,0.03);
+      border: 1.5px solid var(--border-dim); border-radius: 12px;
+      cursor: pointer; transition: all 0.2s; text-align: center;
+    }
+    .role-card:hover { border-color: rgba(0,212,255,0.2); background: rgba(255,255,255,0.05); }
+    .role-option input:checked + .role-card {
+      border-color: var(--blue-bright);
+      background: rgba(29,140,248,0.08);
+      box-shadow: 0 0 0 1px var(--blue-bright);
+    }
+    .role-icon  { font-size: 20px; }
+    .role-label { font-size: 0.82rem; font-weight: 700; }
+    .role-sub   { font-size: 0.7rem; color: var(--text-dim); }
+
+    /* Form fields — form-control class preserved for auth.js */
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block; font-size: 0.82rem; font-weight: 600;
+      color: var(--text-mid); margin-bottom: 7px;
+    }
+    .form-control {
+      width: 100%; padding: 11px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid var(--border-dim);
+      border-radius: 10px; color: #f0f4ff;
+      font-family: inherit; font-size: 0.875rem;
+      outline: none; transition: all 0.2s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-control::placeholder { color: rgba(240,244,255,0.22); }
+    .form-control:focus {
+      border-color: var(--blue-bright);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 3px rgba(29,140,248,0.14);
+    }
+    .form-control.error { border-color: var(--red); }
+    textarea.form-control { resize: vertical; min-height: 72px; }
+
+    /* Select styling */
+    select.form-control {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(240,244,255,0.4)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+    select.form-control option { background: #0d1424; color: #f0f4ff; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Password strength — original IDs preserved */
+    #pw-strength-bar { margin-bottom: 14px; }
+    #pw-strength-label { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 5px; }
+    .strength-track {
+      height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px;
+    }
+    #pw-strength-fill {
+      height: 100%; border-radius: 2px;
+      transition: width 0.3s, background 0.3s;
+      width: 0%;
+    }
+
+    /* Buttons — original classes preserved */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 20px; border: none; border-radius: 10px;
+      font-family: inherit; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.25s; text-decoration: none; white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-bright) 100%);
+      color: white; box-shadow: 0 4px 20px rgba(29,140,248,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(29,140,248,0.55); color: white; }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .btn-full { width: 100%; }
+
+    /* Divider + footer — original classes preserved */
+    .auth-divider {
+      display: flex; align-items: center; gap: 14px;
+      margin: 20px 0; font-size: 0.78rem; color: var(--text-dim);
+    }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-dim); }
+
+    .btn-google {
+      width: 100%; padding: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-dim); border-radius: 10px;
+      color: var(--text-mid); font-family: inherit; font-size: 0.875rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 20px;
+    }
+    .btn-google:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.18); color: #fff; }
+    .google-icon { width: 18px; height: 18px; flex-shrink: 0; }
+
+    .auth-footer { text-align: center; font-size: 0.875rem; color: var(--text-dim); }
+    .auth-footer a { color: var(--glow); text-decoration: none; font-weight: 600; }
+    .auth-footer a:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .auth-shell { grid-template-columns: 1fr; }
+      .auth-left  { display: none; }
+      .auth-right { padding: 40px 24px; min-height: 100vh; }
+    }
+    @media (max-width: 420px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-page="register">
+
+<div class="auth-shell">
+
+  <!-- LEFT PANEL -->
+  <div class="auth-left">
+    <div class="auth-left-bg"></div>
+    <div class="auth-left-content">
+
+      <a href="index.html" class="auth-logo">
+        <div class="logo-mark">B2R</div>
+        <span class="logo-name">Back2<span>Roots</span></span>
+      </a>
+
+      <div class="auth-left-hero">
+        <div class="eyebrow">Join the Community</div>
+        <h1 class="left-title">
+          Your roots are<br>your <span class="grad">greatest asset</span>
+        </h1>
+        <p class="left-sub">
+          Connect with alumni and students from your college. Get mentored, find opportunities, and give back — all in one place.
+        </p>
+
+        <div class="steps-visual">
+          <div class="step-row">
+            <div class="step-dot sd-blue">1</div>
+            <div>
+              <div class="step-title">Create your profile</div>
+              <div class="step-desc">Set up in under 2 minutes with your college details</div>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-dot sd-cyan">2</div>
+            <div>
+              <div class="step-title">Get AI-matched instantly</div>
+              <div class="step-desc">See your top alumni or student recommendations</div>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-dot sd-green">3</div>
+            <div>
+              <div class="step-title">Start connecting</div>
+              <div class="step-desc">Send mentorship requests, post, and chat directly</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mini-stats">
+          <div class="mini-stat">
+            <div class="mini-stat-num">2,400+</div>
+            <div class="mini-stat-lbl">Members</div>
+          </div>
+          <div class="mini-divider"></div>
+          <div class="mini-stat">
+            <div class="mini-stat-num">840+</div>
+            <div class="mini-stat-lbl">Mentorships</div>
+          </div>
+          <div class="mini-divider"></div>
+          <div class="mini-stat">
+            <div class="mini-stat-num">Free</div>
+            <div class="mini-stat-lbl">Always</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+
+      <h2 class="form-title">Create Account</h2>
+      <p class="form-subtitle">Join Back2Roots — it's free · <a href="login.html">Already have an account?</a></p>
+
+      <!-- Original ID "register-error" preserved for auth.js -->
+      <div class="alert alert-error" id="register-error" role="alert"></div>
+
+      <!-- Original form ID "register-form" preserved for auth.js -->
+      <form id="register-form" novalidate>
+
+        <!-- Role selector (visual cards sync to hidden select below) -->
+        <div style="margin-bottom:18px;">
+          <div class="form-label" style="margin-bottom:10px;">I am joining as a…</div>
+          <div class="role-selector">
+            <label class="role-option">
+              <input type="radio" name="role-vis" value="student" checked>
+              <div class="role-card">
+                <span class="role-icon">🎓</span>
+                <span class="role-label">Student</span>
+                <span class="role-sub">Seeking mentorship</span>
+              </div>
+            </label>
+            <label class="role-option">
+              <input type="radio" name="role-vis" value="alumni">
+              <div class="role-card">
+                <span class="role-icon">🏆</span>
+                <span class="role-label">Alumni</span>
+                <span class="role-sub">Here to give back</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <!-- Original id="name" preserved -->
+          <div class="form-group">
+            <label class="form-label" for="name">Full Name <span style="color:var(--accent-red)">*</span></label>
+            <input class="form-control" type="text" id="name" placeholder="Jane Doe" required>
+          </div>
+          <!-- Original id="role" preserved — hidden, synced by JS from radio cards -->
+          <div class="form-group" style="display:none;">
+            <label class="form-label" for="role">Role</label>
+            <select class="form-control" id="role" required>
+              <option value="">— Select —</option>
+              <option value="student" selected>Student</option>
+              <option value="alumni">Alumni</option>
+            </select>
+          </div>
+          <!-- College visible in top row -->
+          <div class="form-group">
+            <label class="form-label" for="college">College / University</label>
+            <input class="form-control" type="text" id="college" placeholder="e.g. IIT Bombay">
+          </div>
+        </div>
+
+        <!-- Original id="email" preserved -->
+        <div class="form-group">
+          <label class="form-label" for="email">Email <span style="color:var(--accent-red)">*</span></label>
+          <input class="form-control" type="email" id="email" placeholder="you@college.edu" required>
+        </div>
+
+        <div class="two-col">
+          <!-- Original id="password" preserved -->
+          <div class="form-group">
+            <label class="form-label" for="password">Password <span style="color:var(--accent-red)">*</span></label>
+            <input class="form-control" type="password" id="password" placeholder="Min 6 chars" required>
+          </div>
+          <!-- Original id="confirm-password" preserved -->
+          <div class="form-group">
+            <label class="form-label" for="confirm-password">Confirm <span style="color:var(--accent-red)">*</span></label>
+            <input class="form-control" type="password" id="confirm-password" placeholder="Repeat" required>
+          </div>
+        </div>
+
+        <!-- Password strength — all original IDs preserved exactly -->
+        <div id="pw-strength-bar" style="display:none;margin-bottom:14px;">
+          <div id="pw-strength-label" style="font-size:0.78rem;color:var(--text-muted);margin-bottom:5px;">Strength</div>
+          <div class="strength-track">
+            <div id="pw-strength-fill" style="height:100%;border-radius:2px;transition:width 0.3s,background 0.3s;width:0%;"></div>
+          </div>
+        </div>
+
+        <!-- Original id="skills" preserved -->
+        <div class="form-group">
+          <label class="form-label" for="skills">Skills <span style="color:var(--text-muted);font-weight:400;">(comma-separated)</span></label>
+          <input class="form-control" type="text" id="skills" placeholder="Python, Machine Learning, React">
+        </div>
+
+        <!-- Original id="bio" preserved -->
+        <div class="form-group">
+          <label class="form-label" for="bio">Short Bio</label>
+          <textarea class="form-control" id="bio" rows="2" placeholder="Tell the community about yourself…"></textarea>
+        </div>
+
+        <!-- Original id="register-btn" preserved for auth.js -->
+        <button type="submit" class="btn btn-primary btn-full" id="register-btn">
+          Create Account →
+        </button>
+
+      </form>
+
+      <div class="auth-divider"><span>or</span></div>
+
+      <button class="btn-google" onclick="alert('Google OAuth integration goes here.')">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <!-- Original class "auth-footer" preserved -->
+      <div class="auth-footer">Already have an account? <a href="login.html">Sign in</a></div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sync visual role cards → hidden #role select (auth.js reads #role)
+  document.querySelectorAll('input[name="role-vis"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.getElementById('role').value = radio.value;
+    });
+  });
+
+  // Show alert when auth.js writes to #register-error
+  const regError = document.getElementById('register-error');
+  new MutationObserver(() => {
+    regError.style.display = regError.textContent.trim() ? 'flex' : 'none';
+  }).observe(regError, { childList: true, subtree: true, characterData: true });
+</script>
+
+<!-- Original script tag preserved exactly -->
+<script type="module" src="js/auth.js"></script>
+</body>
+</html>

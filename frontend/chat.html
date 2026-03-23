@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages — Back2Roots</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/app-dark.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="dashboard.html" class="nav-logo">
+      <div class="logo-icon">B2R</div>
+      <span class="logo-text">Back2Roots</span>
+    </a>
+    <div class="nav-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="global-search-input" placeholder="Search people…" autocomplete="off">
+      <div id="global-search-dropdown" style="display:none;position:absolute;top:38px;left:0;right:0;
+           background:#0d1424;border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);
+           box-shadow:0 8px 32px rgba(0,0,0,0.6);z-index:500;max-height:300px;overflow-y:auto;"></div>
+    </div>
+    <div class="nav-links">
+      <a class="nav-link" href="dashboard.html"><span class="nav-icon">🏠</span><span>Home</span></a>
+      <a class="nav-link active" href="chat.html"><span class="nav-icon">💬</span><span>Messages</span></a>
+      <a class="nav-link" href="profile.html"><span class="nav-icon">👤</span><span>Profile</span></a>
+      <div class="nav-avatar" id="nav-user-avatar">?</div>
+      <button id="logout-btn" class="btn btn-ghost btn-sm" style="margin-left:4px;">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chat-layout">
+  <!-- ── Left: conversation list ── -->
+  <div class="chat-sidebar">
+    <div class="chat-sidebar-header">
+      💬 Messaging
+      <button id="new-chat-btn" title="New conversation"
+        style="float:right;background:none;border:none;cursor:pointer;font-size:18px;color:var(--primary);">✏️</button>
+    </div>
+    <input class="chat-search-input" id="chat-search" type="text" placeholder="Filter conversations…">
+    <div class="chat-list" id="chat-list">
+      <!-- Skeleton -->
+      <div class="chat-list-item" style="pointer-events:none;">
+        <div class="skeleton" style="width:42px;height:42px;border-radius:50%;flex-shrink:0;"></div>
+        <div style="flex:1;"><div class="skeleton skeleton-line wide" style="margin-bottom:4px;"></div>
+        <div class="skeleton skeleton-line narrow"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Right: active chat ── -->
+  <div style="display:flex;flex-direction:column;overflow:hidden;">
+
+    <!-- No chat selected placeholder -->
+    <div class="chat-placeholder" id="chat-placeholder">
+      <div class="icon">💬</div>
+      <h3>Your Messages</h3>
+      <p style="font-size:0.9rem;">Select a conversation from the left, or start a new one.</p>
+      <button class="btn btn-primary btn-sm" id="browse-alumni-btn" style="margin-top:12px;">
+        Browse Alumni to Message
+      </button>
+    </div>
+
+    <!-- Active chat -->
+    <div class="chat-main" id="chat-main" style="display:none;">
+      <div class="chat-main-header" id="chat-header-info"></div>
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chat-input"
+          placeholder="Write a message… (Enter to send, Shift+Enter for newline)"
+          rows="1" maxlength="2000"></textarea>
+        <button class="chat-send-btn" id="chat-send" title="Send">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New chat modal -->
+<div class="modal-overlay" id="new-chat-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">✏️ New Conversation</span>
+      <button class="modal-close" id="new-chat-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Search by name, college, or skill</label>
+        <input class="form-control" type="text" id="user-search-input"
+          placeholder="Type to search…" autocomplete="off">
+      </div>
+      <div id="user-search-results" style="max-height:280px;overflow-y:auto;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('browse-alumni-btn')?.addEventListener('click', () => {
+    window.location.href = 'dashboard.html#alumni';
+  });
+</script>
+
+<!-- Wire up external chat.js module -->
+<script type="module" src="js/chat.js"></script>
+
+</body>
+</html>
