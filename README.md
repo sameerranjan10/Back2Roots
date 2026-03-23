@@ -7,7 +7,7 @@ A full-stack college networking platform with LinkedIn-style UI, AI recommendati
 ## Project Structure
 
 ```
-alumni_nexus/
+back2roots/
 ├── backend/                    ← FastAPI Python backend
 │   ├── app/
 │   │   ├── main.py             ← App entry point
