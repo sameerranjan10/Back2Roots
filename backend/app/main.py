@@ -56,18 +56,18 @@ app = FastAPI(
 )
 
 # ── CORS ──────────────────────────────────────────────────────────────────────
+# ── CORS ──────────────────────────────────────────────────────────────────────
+origins = [
+    "https://back2-roots.vercel.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://back2-roots.vercel.app",  # ✅ ADD THIS
-    ],
-    allow_credentials=True,
+    allow_origins=origins,
+    allow_credentials=False,   # 🔥 IMPORTANT CHANGE
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # ── Static file serving (uploaded files) ──────────────────────────────────────
 app.mount("/static/uploads", StaticFiles(directory="uploads"), name="uploads")
 
