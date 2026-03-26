@@ -2,7 +2,9 @@
 //  api.js  —  Centralized API communication layer
 // ══════════════════════════════════════════════════════════
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = window.location.hostname === "localhost"
+  ? "http://localhost:8000"
+  : "https://back2roots-uews.onrender.com";
 
 // ── Token management ─────────────────────────────────────
 
