@@ -11,6 +11,7 @@ alembic==1.13.1          # optional — for migrations
 pydantic[email]==2.7.1
 
 # ── Auth ──────────────────────────────────────────────────
+bcrypt==3.2.2
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.9  # required for OAuth2PasswordBearer form parsing
