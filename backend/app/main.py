@@ -1,5 +1,5 @@
 """
-Alumni Nexus — AI-Driven Alumni Management and Networking Platform
+Back2Roots API— AI-Driven Alumni Management and Networking Platform
 FastAPI application entry point — all routers, middleware, static files.
 """
 
@@ -60,7 +60,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "http://127.0.0.1:3000"
+        "http://127.0.0.1:3000",
+        "https://back2-roots.vercel.app",  # ✅ ADD THIS
     ],
     allow_credentials=True,
     allow_methods=["*"],
