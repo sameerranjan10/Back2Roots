@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Back2Roots</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">B2R</div>
+      <div class="logo-text-group">
+        <span class="logo-name">Back2Roots</span>
+        <span class="logo-badge">ADMIN</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#overview"       class="nav-item active" data-section="overview">
+        <span class="nav-icon">◈</span> Overview
+      </a>
+      <a href="#pending-users"  class="nav-item"        data-section="pending">
+        <span class="nav-icon">⧖</span> Pending Users
+        <span class="nav-badge" id="sidebar-pending-count">0</span>
+      </a>
+      <a href="dashboard.html"  class="nav-item">
+        <span class="nav-icon">←</span> Back to App
+      </a>
+    </nav>
+
+    <div class="sidebar-user" id="sidebar-user">
+      <div class="sidebar-avatar" id="sidebar-avatar">A</div>
+      <div class="sidebar-user-info">
+        <span class="sidebar-user-name" id="sidebar-user-name">Admin</span>
+        <span class="sidebar-user-role">Super Admin</span>
+      </div>
+      <button class="sidebar-logout" id="logout-btn" title="Sign out">⏻</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <div class="main-wrap">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">Admin Dashboard</h1>
+        <span class="page-subtitle">Manage users, roles, and access</span>
+      </div>
+      <div class="topbar-right">
+        <div class="status-dot-wrap">
+          <span class="status-dot"></span>
+          <span class="status-text">System Online</span>
+        </div>
+        <div class="topbar-time" id="topbar-time"></div>
+      </div>
+    </header>
+
+    <!-- ── Toast ── -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ── Stats ── -->
+    <section class="stats-grid" id="overview">
+
+      <div class="stat-card" id="stat-students">
+        <div class="stat-icon-wrap blue">
+          <span class="stat-icon">🎓</span>
+        </div>
+        <div class="stat-body">
+          <div class="stat-value" id="stat-students-val">
+            <span class="skeleton-inline">···</span>
+          </div>
+          <div class="stat-label">Total Students</div>
+          <div class="stat-sub" id="stat-students-sub">Loading…</div>
+        </div>
+        <div class="stat-sparkline blue" id="spark-students"></div>
+      </div>
+
+      <div class="stat-card" id="stat-alumni">
+        <div class="stat-icon-wrap cyan">
+          <span class="stat-icon">🏛️</span>
+        </div>
+        <div class="stat-body">
+          <div class="stat-value" id="stat-alumni-val">
+            <span class="skeleton-inline">···</span>
+          </div>
+          <div class="stat-label">Total Alumni</div>
+          <div class="stat-sub" id="stat-alumni-sub">Loading…</div>
+        </div>
+        <div class="stat-sparkline cyan" id="spark-alumni"></div>
+      </div>
+
+      <div class="stat-card danger" id="stat-pending">
+        <div class="stat-icon-wrap red">
+          <span class="stat-icon">⧖</span>
+        </div>
+        <div class="stat-body">
+          <div class="stat-value" id="stat-pending-val">
+            <span class="skeleton-inline">···</span>
+          </div>
+          <div class="stat-label">Pending Approval</div>
+          <div class="stat-sub" id="stat-pending-sub">Loading…</div>
+        </div>
+        <div class="pulse-ring" id="pulse-ring"></div>
+      </div>
+
+    </section>
+
+    <!-- ── Pending Users Table ── -->
+    <section class="section-card" id="pending-users">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">⧖ Pending User Approvals</h2>
+          <p class="section-desc">Review and approve or reject new registrations</p>
+        </div>
+        <button class="btn-refresh" id="refresh-btn" title="Refresh">
+          <span id="refresh-icon">↻</span> Refresh
+        </button>
+      </div>
+
+      <!-- Filter row -->
+      <div class="filter-row">
+        <input class="filter-input" type="text" id="filter-input" placeholder="Filter by name, email or role…">
+        <div class="filter-chips">
+          <button class="chip active" data-role="all">All</button>
+          <button class="chip" data-role="student">Students</button>
+          <button class="chip" data-role="alumni">Alumni</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table class="data-table" id="pending-table">
+          <thead>
+            <tr>
+              <th class="col-name">Name</th>
+              <th class="col-email">Email</th>
+              <th class="col-role">Role</th>
+              <th class="col-joined">Registered</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pending-tbody">
+            <!-- Skeleton rows -->
+            <tr class="skeleton-row">
+              <td><div class="skel skel-name"></div></td>
+              <td><div class="skel skel-email"></div></td>
+              <td><div class="skel skel-chip"></div></td>
+              <td><div class="skel skel-date"></div></td>
+              <td><div class="skel-actions"></div></td>
+            </tr>
+            <tr class="skeleton-row">
+              <td><div class="skel skel-name"></div></td>
+              <td><div class="skel skel-email"></div></td>
+              <td><div class="skel skel-chip"></div></td>
+              <td><div class="skel skel-date"></div></td>
+              <td><div class="skel-actions"></div></td>
+            </tr>
+            <tr class="skeleton-row">
+              <td><div class="skel skel-name"></div></td>
+              <td><div class="skel skel-email"></div></td>
+              <td><div class="skel skel-chip"></div></td>
+              <td><div class="skel skel-date"></div></td>
+              <td><div class="skel-actions"></div></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="empty-state" style="display:none;">
+          <div class="empty-icon">✓</div>
+          <h3>All caught up!</h3>
+          <p>No users are currently awaiting approval.</p>
+        </div>
+
+        <!-- Error state -->
+        <div class="error-state" id="error-state" style="display:none;">
+          <div class="error-icon">⚠</div>
+          <h3 id="error-title">Failed to load</h3>
+          <p id="error-desc">Could not reach the server. Check your connection.</p>
+          <button class="btn-retry" id="retry-btn">Try Again</button>
+        </div>
+      </div>
+
+      <div class="table-footer" id="table-footer" style="display:none;">
+        <span id="table-count-label"></span>
+      </div>
+    </section>
+
+  </div><!-- /main-wrap -->
+
+  <!-- ── Confirm Modal ── -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal">
+      <div class="modal-icon" id="modal-icon">⚠</div>
+      <h3 class="modal-title" id="modal-title">Confirm Action</h3>
+      <p  class="modal-body"  id="modal-body">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="modal-cancel">Cancel</button>
+        <button class="btn-confirm" id="modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

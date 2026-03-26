@@ -111,9 +111,19 @@ function initRegisterPage() {
     try {
       const data = await auth.register({ name, email, password, role, college, skills, bio });
       setToken(data.access_token);
-      setUser(data.user);
-      toast('Account created! Welcome to Back2Roots 🎉', 'success');
-      setTimeout(() => window.location.href = 'dashboard.html', 700);
+setUser(data.user);
+
+// 🔥 ADD THIS LINE
+localStorage.setItem("role", data.user.role);
+
+toast('Welcome back, ' + data.user.name + '! 👋', 'success');
+
+// 🔥 ROLE-BASED REDIRECT
+if (data.user.role === "admin") {
+  setTimeout(() => window.location.href = 'admin.html', 700);
+} else {
+  setTimeout(() => window.location.href = 'dashboard.html', 700);
+}
     } catch (err) {
       showError(errEl, err.message || 'Registration failed. Please try again.');
       resetBtn(btn, 'Create Account');
