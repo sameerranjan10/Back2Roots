@@ -122,11 +122,22 @@
        * ⚠️  REPLACE '/api/chat' with your actual FastAPI endpoint URL.
        * Keep the same request/response shape you already use.
        */
-      const res  = await fetch('https://back2roots-uews.onrender.com/docs/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
-      });
+      const res  = await fetch("https://back2roots-uews.onrender.com/ai/chatbot", {
+         method: "POST",
+         headers: {    
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: userMessage
+            })
+        })
+.then(res => res.json())
+.then(data => {
+  console.log(data);
+})
+.catch(err => {
+  console.error(err);
+});
       const data = await res.json();
       hideTyping();
       const reply = data.reply || data.response || data.message
