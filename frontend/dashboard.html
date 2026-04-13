@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — Back2Roots</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chatbot-upgrade.css">
   <link rel="stylesheet" href="css/app-dark.css">
   <style>
     /* Mobile hamburger */
@@ -15,6 +16,7 @@
                           border-right:1px solid rgba(255,255,255,0.08); }
     .mobile-nav-drawer.open { left:0; }
     .mobile-nav-overlay.open { display:block; }
+
     /* Search dropdown */
     .search-dropdown { display:none; position:absolute; top:100%; left:0; right:0; background:#0d1424;
                        border:1px solid rgba(255,255,255,0.1); border-radius:var(--radius); box-shadow:0 8px 32px rgba(0,0,0,0.6);
@@ -24,12 +26,14 @@
                           border-bottom:1px solid rgba(255,255,255,0.06); transition:var(--transition); color:rgba(240,244,255,0.75); }
     .search-result-item:last-child { border-bottom:none; }
     .search-result-item:hover { background:rgba(255,255,255,0.05); }
+
     /* Notification dropdown */
     .notif-btn { position:relative; }
     .notif-badge { position:absolute; top:-2px; right:-2px; background:#f87171; color:white;
                    border-radius:50%; width:16px; height:16px; font-size:10px; font-weight:700;
                    display:none; place-items:center; }
     .notif-badge.show { display:grid; }
+
     @media (max-width: 768px) {
       .hamburger { display:block; }
       .nav-links  { display:none; }
@@ -42,6 +46,7 @@
 <!-- ════════════════════ NAVBAR ════════════════════ -->
 <nav class="navbar">
   <div class="nav-inner">
+
     <!-- Mobile hamburger -->
     <button class="hamburger" id="hamburger-btn" aria-label="Menu">☰</button>
 
@@ -113,7 +118,9 @@
             💬 Messages
           </a>
           <div style="border-top:1px solid rgba(255,255,255,0.08);"></div>
-          <button id="logout-btn" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''"
+          <button id="logout-btn"
+            onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+            onmouseout="this.style.background=''"
             style="display:block;width:100%;padding:10px 16px;font-size:0.875rem;color:#fca5a5;
                    background:none;border:none;text-align:left;cursor:pointer;font-family:inherit;">
             🚪 Sign Out
@@ -129,17 +136,20 @@
 <div class="mobile-nav-drawer" id="mobile-drawer">
   <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
     <div class="nav-logo"><div class="logo-icon">B2R</div><span class="logo-text">Back2Roots</span></div>
-    <button onclick="closeMobileNav()" style="background:none;border:none;font-size:22px;cursor:pointer;">✕</button>
+    <button onclick="closeMobileNav()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#f0f4ff;">✕</button>
   </div>
   <div id="mobile-profile-summary" style="padding:16px;border-bottom:1px solid var(--border);"></div>
   <nav>
-    <a href="dashboard.html"       class="sidebar-nav-item">🏠 Feed</a>
-    <a href="dashboard.html#alumni"class="sidebar-nav-item">🏛️ Browse Alumni</a>
-    <a href="chat.html"            class="sidebar-nav-item">💬 Messages</a>
+    <a href="dashboard.html"            class="sidebar-nav-item">🏠 Feed</a>
+    <a href="dashboard.html#alumni"     class="sidebar-nav-item">🏛️ Browse Alumni</a>
+    <a href="chat.html"                 class="sidebar-nav-item">💬 Messages</a>
     <a href="dashboard.html#mentorship" class="sidebar-nav-item">🎓 Mentorship</a>
-    <a href="profile.html"         class="sidebar-nav-item">👤 My Profile</a>
-    <a href="dashboard.html#admin" class="sidebar-nav-item admin-only" style="display:none;">⚙️ Admin Panel</a>
-    <button id="mobile-logout"     class="sidebar-nav-item" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;color:var(--accent-red);">🚪 Sign Out</button>
+    <a href="profile.html"              class="sidebar-nav-item">👤 My Profile</a>
+    <a href="dashboard.html#admin"      class="sidebar-nav-item admin-only" style="display:none;">⚙️ Admin Panel</a>
+    <button id="mobile-logout" class="sidebar-nav-item"
+      style="width:100%;text-align:left;border:none;background:none;cursor:pointer;color:var(--accent-red);">
+      🚪 Sign Out
+    </button>
   </nav>
 </div>
 
@@ -152,7 +162,7 @@
       <div class="profile-card-banner"></div>
       <div style="padding:0 16px 16px;text-align:center;">
         <div class="skeleton skeleton-avatar" style="margin:-36px auto 10px;"></div>
-        <div class="skeleton skeleton-line wide" style="margin:0 auto 6px;"></div>
+        <div class="skeleton skeleton-line wide"   style="margin:0 auto 6px;"></div>
         <div class="skeleton skeleton-line narrow" style="margin:0 auto;"></div>
       </div>
     </div>
@@ -203,7 +213,10 @@
           </div>
           <div id="post-image-preview" style="margin-top:8px;display:none;">
             <img id="post-image-preview-img" style="max-height:150px;border-radius:var(--radius);object-fit:cover;" alt="">
-            <button onclick="clearImagePreview()" style="background:none;border:none;cursor:pointer;color:var(--accent-red);font-size:12px;display:block;margin-top:4px;">✕ Remove</button>
+            <button onclick="clearImagePreview()"
+              style="background:none;border:none;cursor:pointer;color:var(--accent-red);font-size:12px;display:block;margin-top:4px;">
+              ✕ Remove
+            </button>
           </div>
           <div class="post-compose-footer">
             <button class="btn btn-ghost btn-sm" id="post-cancel">Cancel</button>
@@ -223,7 +236,7 @@
           <div style="display:flex;gap:12px;">
             <div class="skeleton skeleton-avatar"></div>
             <div style="flex:1;">
-              <div class="skeleton skeleton-line wide" style="margin-bottom:6px;"></div>
+              <div class="skeleton skeleton-line wide"   style="margin-bottom:6px;"></div>
               <div class="skeleton skeleton-line narrow"></div>
             </div>
           </div>
@@ -278,24 +291,27 @@
       <div id="alumni-suggestions">
         <div class="suggestion-item" style="pointer-events:none;">
           <div class="skeleton" style="width:40px;height:40px;border-radius:50%;flex-shrink:0;"></div>
-          <div style="flex:1;"><div class="skeleton skeleton-line wide" style="margin-bottom:4px;"></div>
-          <div class="skeleton skeleton-line narrow"></div></div>
+          <div style="flex:1;">
+            <div class="skeleton skeleton-line wide"   style="margin-bottom:4px;"></div>
+            <div class="skeleton skeleton-line narrow"></div>
+          </div>
         </div>
       </div>
     </div>
     <div class="suggestions-card">
       <div class="suggestions-header">📚 Quick Links</div>
       <div style="padding:8px 0;">
-        <a href="chat.html" class="sidebar-nav-item" style="padding:8px 16px;">💬 Messages</a>
-        <a href="profile.html" class="sidebar-nav-item" style="padding:8px 16px;">👤 My Profile</a>
+        <a href="chat.html"      class="sidebar-nav-item" style="padding:8px 16px;">💬 Messages</a>
+        <a href="profile.html"   class="sidebar-nav-item" style="padding:8px 16px;">👤 My Profile</a>
         <a href="#mentorship" onclick="showSection('mentorship')" class="sidebar-nav-item" style="padding:8px 16px;">🎓 Mentorship</a>
-        <a href="#alumni" onclick="showSection('alumni')" class="sidebar-nav-item" style="padding:8px 16px;">🏛️ Alumni</a>
+        <a href="#alumni"     onclick="showSection('alumni')"     class="sidebar-nav-item" style="padding:8px 16px;">🏛️ Alumni</a>
       </div>
     </div>
   </aside>
+
 </main>
 
-<!-- Mentorship modal -->
+<!-- ════════════════════ MENTORSHIP MODAL ════════════════════ -->
 <div class="modal-overlay" id="mentorship-modal">
   <div class="modal">
     <div class="modal-header">
@@ -320,38 +336,110 @@
   </div>
 </div>
 
-<!-- AI Chatbot widget -->
-<div class="chatbot-widget">
-  <div class="chatbot-window" id="chatbot-window">
-    <div class="chatbot-header">
-      <span style="font-size:22px;">🤖</span>
-      <div class="chatbot-header-info">
-        <div class="chatbot-header-name">Back2Roots AI</div>
-        <div class="chatbot-header-status">● Online — Career Guidance</div>
+<!-- ════════════════════ AI CHATBOT WIDGET ════════════════════ -->
+
+<!-- Premium popup (new glassmorphic UI) -->
+<div id="chatbot-popup" class="chatbot-popup">
+  <div class="cb-shell">
+
+    <!-- HEADER -->
+    <div class="cb-header">
+      <div class="cb-header-brand">
+        <div class="cb-brand-dot"></div>
+        <div>
+          <p class="cb-header-title">Back2Roots AI Assistant</p>
+          <p class="cb-header-subtitle">● Online — Career Guidance</p>
+        </div>
       </div>
-      <button class="chatbot-close" id="chatbot-close">✕</button>
+      <div class="cb-header-actions">
+        <button id="cb-expand-btn" class="cb-icon-btn" type="button"
+                aria-label="Expand to fullscreen" title="Expand to fullscreen">⛶</button>
+        <button id="cb-close-btn" class="cb-icon-btn" type="button"
+                aria-label="Close chatbot" title="Close">✕</button>
+      </div>
     </div>
-    <div class="chatbot-messages" id="chatbot-messages"></div>
+
+    <!-- BODY: sidebar (visible in fullscreen only) + messages -->
+    <div class="cb-body">
+
+      <aside class="cb-sidebar" aria-label="Quick actions">
+        <p class="cb-sidebar-label">Quick Actions</p>
+        <button class="cb-quick-action" type="button"
+                data-prompt="Help me find alumni from my department">
+          <span class="cb-quick-icon">🏛️</span>
+          <span class="cb-quick-label">Find Alumni</span>
+        </button>
+        <button class="cb-quick-action" type="button"
+                data-prompt="Give me career guidance based on my profile">
+          <span class="cb-quick-icon">🚀</span>
+          <span class="cb-quick-label">Career Guidance</span>
+        </button>
+        <button class="cb-quick-action" type="button"
+                data-prompt="I am looking for a mentor to guide me">
+          <span class="cb-quick-icon">🎓</span>
+          <span class="cb-quick-label">Mentorship</span>
+        </button>
+        <button class="cb-quick-action" type="button"
+                data-prompt="What skills should I develop for my career goals?">
+          <span class="cb-quick-icon">💡</span>
+          <span class="cb-quick-label">Skill Recommendations</span>
+        </button>
+      </aside>
+
+      <!-- Messages area -->
+      <div class="chatbot-messages" role="log" aria-live="polite">
+
+        <!-- Welcome message -->
+        <div class="message-bubble received">
+          <div class="message-text">
+            👋 Hi! I'm the Back2Roots AI Assistant. I can help you find alumni,
+            explore career paths, discover mentors, and suggest skills to learn.
+            What would you like to know?
+          </div>
+          <div class="message-time">just now</div>
+        </div>
+
+        <!-- Typing indicator (hidden by default) -->
+        <div id="cb-typing" class="cb-typing" aria-label="Back2Roots AI is typing">
+          <span></span><span></span><span></span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Sticky input row -->
     <div class="chatbot-input-row">
-      <input class="chatbot-input" type="text" id="chatbot-input"
-        placeholder="Ask about resume, career, mentor…" maxlength="300">
-      <button class="chatbot-send" id="chatbot-send">➤</button>
+      <input
+        class="chatbot-input"
+        type="text"
+        placeholder="Ask about alumni, mentors, careers…"
+        autocomplete="off"
+        aria-label="Message Back2Roots AI"
+      />
+      <button class="chatbot-send" type="button" aria-label="Send message">➤</button>
     </div>
+
   </div>
-  <button class="chatbot-toggle" id="chatbot-toggle" title="AI Career Assistant">🤖</button>
 </div>
 
+<!-- Floating launcher button (unchanged style, just opens new popup) -->
+<button class="chatbot-toggle chatbot-launcher" id="chatbot-toggle-btn"
+        title="AI Career Assistant" aria-label="Open AI Assistant">
+  🤖
+</button>
+
+<!-- ════════════════════ SCRIPTS ════════════════════ -->
 <script>
   // ── Section routing ─────────────────────────────────────
   function showSection(name) {
     ['feed','alumni','mentorship','admin'].forEach(s => {
-      document.getElementById(`section-${s}`).style.display = s === name ? 'block' : 'none';
+      document.getElementById('section-' + s).style.display = s === name ? 'block' : 'none';
     });
     document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
   }
 
   function handleHash() {
-    const hash = window.location.hash.replace('#','');
+    const hash = window.location.hash.replace('#', '');
     if (['alumni','mentorship','admin'].includes(hash)) showSection(hash);
     else showSection('feed');
   }
@@ -373,6 +461,7 @@
     document.getElementById('mobile-drawer').classList.remove('open');
     document.getElementById('mobile-overlay').classList.remove('open');
   }
+  window.closeMobileNav = closeMobileNav;
   document.getElementById('hamburger-btn').addEventListener('click', openMobileNav);
   document.getElementById('mobile-overlay').addEventListener('click', closeMobileNav);
 
@@ -396,14 +485,14 @@
     dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
   });
   document.addEventListener('click', e => {
-    const dd = document.getElementById('notif-dropdown');
+    const dd  = document.getElementById('notif-dropdown');
     const btn = document.getElementById('notif-btn');
     if (dd && !btn.contains(e.target) && !dd.contains(e.target))
       dd.style.display = 'none';
   });
 
   // ── Image file upload preview ───────────────────────────
-  document.getElementById('post-image-file').addEventListener('change', async function() {
+  document.getElementById('post-image-file').addEventListener('change', function () {
     const file = this.files[0];
     if (!file) return;
     const preview = document.getElementById('post-image-preview');
@@ -416,12 +505,208 @@
   function clearImagePreview() {
     document.getElementById('post-image-preview').style.display = 'none';
     document.getElementById('post-image-preview-img').src = '';
-    document.getElementById('post-image-file').value = '';
-    document.getElementById('post-image-url').value  = '';
+    document.getElementById('post-image-file').value  = '';
+    document.getElementById('post-image-url').value   = '';
   }
   window.clearImagePreview = clearImagePreview;
+
+  // ── Chatbot launcher toggle ─────────────────────────────
+  const chatbotPopup  = document.getElementById('chatbot-popup');
+  const chatbotToggle = document.getElementById('chatbot-toggle-btn');
+
+  if (chatbotToggle && chatbotPopup) {
+    chatbotToggle.addEventListener('click', () => {
+      const isOpen = chatbotPopup.classList.toggle('open');
+      // Scroll to bottom whenever opened
+      if (isOpen) {
+        const msgs = chatbotPopup.querySelector('.chatbot-messages');
+        if (msgs) requestAnimationFrame(() => { msgs.scrollTop = msgs.scrollHeight; });
+      }
+    });
+  }
+
+  // Close popup when clicking outside (optional UX)
+  document.addEventListener('click', e => {
+    if (
+      chatbotPopup && chatbotPopup.classList.contains('open') &&
+      !chatbotPopup.contains(e.target) &&
+      chatbotToggle && !chatbotToggle.contains(e.target)
+    ) {
+      // Only close if NOT in fullscreen mode
+      if (!chatbotPopup.classList.contains('cb-fullscreen')) {
+        chatbotPopup.classList.remove('open');
+      }
+    }
+  });
 </script>
 
+<!-- Chatbot upgrade JS (fullscreen, typing indicator, gradual text, quick actions) -->
+<script>
+/**
+ * Back2Roots — AI Chatbot Premium Upgrade JS
+ * Fullscreen toggle · Typing indicator · Gradual bot text · Quick actions · Auto-scroll
+ */
+(function () {
+  'use strict';
+
+  const popup    = document.getElementById('chatbot-popup');
+  const messages = popup ? popup.querySelector('.chatbot-messages') : null;
+  const inputEl  = popup ? popup.querySelector('.chatbot-input')    : null;
+  const sendBtn  = popup ? popup.querySelector('.chatbot-send')     : null;
+
+  if (!popup || !messages) return;
+
+  let isFullscreen = false;
+
+  // ── Expand / fullscreen button ────────────────────────────
+  document.getElementById('cb-expand-btn')?.addEventListener('click', toggleFullscreen);
+
+  // ── Close button (inside popup header) ───────────────────
+  document.getElementById('cb-close-btn')?.addEventListener('click', () => {
+    popup.classList.remove('open');
+    if (isFullscreen) exitFullscreen();
+  });
+
+  // ── Quick action buttons ──────────────────────────────────
+  popup.querySelectorAll('.cb-quick-action').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (inputEl) {
+        inputEl.value = btn.dataset.prompt || '';
+        inputEl.focus();
+        scrollToBottom();
+      }
+    });
+  });
+
+  // ── Auto-scroll on new messages ───────────────────────────
+  new MutationObserver(scrollToBottom)
+    .observe(messages, { childList: true, subtree: true, characterData: true });
+
+  // ── Wire send button ──────────────────────────────────────
+  if (sendBtn && inputEl) {
+    // Clone to remove any old listeners, then re-attach
+    const freshBtn = sendBtn.cloneNode(true);
+    sendBtn.parentNode.replaceChild(freshBtn, sendBtn);
+    freshBtn.addEventListener('click', handleSend);
+
+    inputEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+    });
+  }
+
+  // ────────────────────────────────────────────────────────
+  //  FULLSCREEN
+  // ────────────────────────────────────────────────────────
+  function toggleFullscreen() { isFullscreen ? exitFullscreen() : enterFullscreen(); }
+
+  function enterFullscreen() {
+    isFullscreen = true;
+    popup.classList.add('cb-fullscreen');
+    const btn = document.getElementById('cb-expand-btn');
+    if (btn) { btn.textContent = '🗗'; btn.title = 'Exit fullscreen'; }
+    setTimeout(scrollToBottom, 380);
+  }
+
+  function exitFullscreen() {
+    isFullscreen = false;
+    popup.classList.remove('cb-fullscreen');
+    const btn = document.getElementById('cb-expand-btn');
+    if (btn) { btn.textContent = '⛶'; btn.title = 'Expand to fullscreen'; }
+    setTimeout(scrollToBottom, 380);
+  }
+
+  // ────────────────────────────────────────────────────────
+  //  HELPERS
+  // ────────────────────────────────────────────────────────
+  function scrollToBottom() {
+    requestAnimationFrame(() => { messages.scrollTop = messages.scrollHeight; });
+  }
+
+  function showTyping() {
+    document.getElementById('cb-typing')?.classList.add('show');
+    scrollToBottom();
+  }
+
+  function hideTyping() {
+    document.getElementById('cb-typing')?.classList.remove('show');
+  }
+
+  function typeText(element, text, speed = 15) {
+    return new Promise(resolve => {
+      let i = 0;
+      element.textContent = '';
+      const timer = setInterval(() => {
+        element.textContent += text.charAt(i++);
+        if (i % 5 === 0) scrollToBottom();
+        if (i >= text.length) { clearInterval(timer); scrollToBottom(); resolve(); }
+      }, speed);
+    });
+  }
+
+  function addBubble(text, type) {
+    const wrap   = document.createElement('div');
+    wrap.className = 'message-bubble ' + type;
+    const bubble = document.createElement('div');
+    bubble.className = 'message-text';
+    bubble.textContent = text;
+    const time   = document.createElement('div');
+    time.className = 'message-time';
+    time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    wrap.append(bubble, time);
+    // Insert before typing indicator so dots always stay at bottom
+    const typingEl = document.getElementById('cb-typing');
+    messages.insertBefore(wrap, typingEl || null);
+    scrollToBottom();
+    return wrap;
+  }
+
+  // ────────────────────────────────────────────────────────
+  //  SEND HANDLER — replace /api/chat with your FastAPI URL
+  // ────────────────────────────────────────────────────────
+  async function handleSend() {
+    const text = inputEl?.value.trim();
+    if (!text) return;
+
+    addBubble(text, 'sent');
+    if (inputEl) inputEl.value = '';
+    showTyping();
+
+    try {
+      /*
+       * ⚠️ REPLACE the URL below with your actual FastAPI endpoint.
+       *    Keep the same JSON request/response shape you already use.
+       *    e.g. 'https://your-api.com/chat' or '/api/chat'
+       */
+      const res  = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+      const data = await res.json();
+      hideTyping();
+      const reply = data.reply || data.response || data.message
+                  || 'Sorry, I could not process that request.';
+      const botWrap = addBubble('', 'received');
+      await typeText(botWrap.querySelector('.message-text'), reply, 14);
+
+    } catch {
+      hideTyping();
+      const botWrap = addBubble('', 'received');
+      await typeText(
+        botWrap.querySelector('.message-text'),
+        '⚠️ Connection issue. Please check your network and try again.', 14
+      );
+    }
+  }
+
+  // Expose for any existing inline code that calls these
+  window.cb = { showTyping, hideTyping, typeText, scrollToBottom, addBubble };
+
+})();
+</script>
+
+<!-- Your existing dashboard module (keep as-is) -->
 <script type="module" src="js/dashboard.js"></script>
+
 </body>
 </html>

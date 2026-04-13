@@ -58,13 +58,15 @@ app = FastAPI(
 # ── CORS ──────────────────────────────────────────────────────────────────────
 # ── CORS ──────────────────────────────────────────────────────────────────────
 origins = [
-    "https://back2-roots.vercel.app",
+    "http://127.0.0.1:8080",
+    "http://localhost:8080",
+    "https://back2-roots.vercel.app"
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=False,   # 🔥 IMPORTANT CHANGE
+    allow_credentials=True,   # 🔥 IMPORTANT CHANGE
     allow_methods=["*"],
     allow_headers=["*"],
 )
