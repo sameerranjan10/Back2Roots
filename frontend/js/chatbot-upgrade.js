@@ -1,7 +1,3 @@
-/**
- * Back2Roots — AI Chatbot Premium Upgrade JS
- * Paste before </body> — preserves existing IDs & FastAPI logic
- */
 (function () {
   'use strict';
 
@@ -14,7 +10,7 @@
 
   let isFullscreen = false;
 
-  /* ── Button wiring ───────────────────────────────────── */
+  /* ── Button wiring ── */
   document.getElementById('cb-expand-btn')?.addEventListener('click', toggleFullscreen);
 
   document.getElementById('cb-close-btn')?.addEventListener('click', () => {
@@ -22,139 +18,112 @@
     if (isFullscreen) exitFullscreen();
   });
 
-  document.querySelectorAll('.cb-quick-action').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      if (inputEl) {
-        inputEl.value = btn.dataset.prompt || '';
-        inputEl.focus();
-        scrollToBottom();
-      }
-    });
-  });
-
-  /* ── Auto-scroll observer ────────────────────────────── */
-  new MutationObserver(scrollToBottom)
-    .observe(messages, { childList: true, subtree: true, characterData: true });
-
-  /* ── Intercept send ──────────────────────────────────── */
+  /* ── Send events ── */
   if (sendBtn && inputEl) {
     const fresh = sendBtn.cloneNode(true);
     sendBtn.parentNode.replaceChild(fresh, sendBtn);
     fresh.addEventListener('click', handleSend);
+
     inputEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
     });
   }
 
-  /* ── Fullscreen ──────────────────────────────────────── */
-  function toggleFullscreen() { isFullscreen ? exitFullscreen() : enterFullscreen(); }
+  /* ── Fullscreen ── */
+  function toggleFullscreen() {
+    isFullscreen ? exitFullscreen() : enterFullscreen();
+  }
 
   function enterFullscreen() {
     isFullscreen = true;
     popup.classList.add('cb-fullscreen');
-    const btn = document.getElementById('cb-expand-btn');
-    if (btn) { btn.textContent = '🗗'; btn.title = 'Exit fullscreen'; }
-    setTimeout(scrollToBottom, 380);
   }
 
   function exitFullscreen() {
     isFullscreen = false;
     popup.classList.remove('cb-fullscreen');
-    const btn = document.getElementById('cb-expand-btn');
-    if (btn) { btn.textContent = '⛶'; btn.title = 'Expand to fullscreen'; }
-    setTimeout(scrollToBottom, 380);
   }
 
-  /* ── Helpers ─────────────────────────────────────────── */
+  /* ── Helpers ── */
   function scrollToBottom() {
-    requestAnimationFrame(() => { messages.scrollTop = messages.scrollHeight; });
+    requestAnimationFrame(() => {
+      messages.scrollTop = messages.scrollHeight;
+    });
   }
 
   function showTyping() {
     document.getElementById('cb-typing')?.classList.add('show');
-    scrollToBottom();
   }
 
   function hideTyping() {
     document.getElementById('cb-typing')?.classList.remove('show');
   }
 
-  function typeText(element, text, speed = 15) {
-    return new Promise((resolve) => {
-      let i = 0;
-      element.textContent = '';
-      const timer = setInterval(() => {
-        element.textContent += text.charAt(i++);
-        if (i % 5 === 0) scrollToBottom();
-        if (i >= text.length) { clearInterval(timer); scrollToBottom(); resolve(); }
-      }, speed);
-    });
-  }
-
   function addBubble(text, type) {
-    const wrap   = document.createElement('div');
+    const wrap = document.createElement('div');
     wrap.className = `message-bubble ${type}`;
+
     const bubble = document.createElement('div');
     bubble.className = 'message-text';
     bubble.textContent = text;
-    const time   = document.createElement('div');
+
+    const time = document.createElement('div');
     time.className = 'message-time';
-    time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    wrap.append(bubble, time);
-    // Insert before typing indicator
-    const typingEl = document.getElementById('cb-typing');
-    messages.insertBefore(wrap, typingEl);
+    time.textContent = new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    wrap.appendChild(bubble);
+    wrap.appendChild(time);
+
+    messages.appendChild(wrap);
     scrollToBottom();
-    return wrap;
   }
 
-  /* ── Main send handler ───────────────────────────────── */
+  /* ── MAIN SEND FUNCTION ── */
   async function handleSend() {
     const text = inputEl?.value.trim();
     if (!text) return;
 
     addBubble(text, 'sent');
-    if (inputEl) inputEl.value = '';
+    inputEl.value = '';
     showTyping();
 
     try {
-      /*
-       * ⚠️  REPLACE '/api/chat' with your actual FastAPI endpoint URL.
-       * Keep the same request/response shape you already use.
-       */
-      const res  = await fetch("https://back2roots-uews.onrender.com/ai/chatbot", {
-         method: "POST",
-         headers: {    
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                message: userMessage
-            })
+      const res = await fetch("https://back2roots-uews.onrender.com/ai/chatbot", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: text
         })
-.then(res => res.json())
-.then(data => {
-  console.log(data);
-})
-.catch(err => {
-  console.error(err);
-});
+      });
+
+      if (!res.ok) {
+        throw new Error("Server error: " + res.status);
+      }
+
       const data = await res.json();
+      console.log("AI RESPONSE:", data);
+
       hideTyping();
-      const reply = data.reply || data.response || data.message
-                  || 'Sorry, I could not process that.';
-      const botWrap = addBubble('', 'received');
-      await typeText(botWrap.querySelector('.message-text'), reply, 14);
-    } catch {
-      hideTyping();
-      const botWrap = addBubble('', 'received');
-      await typeText(
-        botWrap.querySelector('.message-text'),
-        '⚠️ Connection issue. Please check your network and try again.', 14
+
+      addBubble(
+        data.response || data.message || "I couldn't understand that.",
+        "received"
       );
+
+    } catch (err) {
+      console.error("ERROR:", err);
+
+      hideTyping();
+      addBubble("⚠️ Connection issue. Please try again.", "received");
     }
   }
-
-  /* Expose API for your existing code if needed */
-  window.cb = { showTyping, hideTyping, typeText, scrollToBottom, addBubble };
 
 })();
